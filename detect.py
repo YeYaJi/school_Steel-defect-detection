@@ -5,14 +5,12 @@ import cv2
 import os
 
 
-
-
 class Detect():
-    def __init__(self, labels_path, cfg_path, weight_path, picture, confidence=0.5, threshhold=0.3):
+    def __init__(self, labels_path, cfg_path, weight_path, confidence=0.5, threshhold=0.3):
         self.labels = labels_path
         self.cfg = cfg_path
         self.weight = weight_path
-        self.picture = picture
+
         self.confidence = confidence
         self.threshold = threshhold
         self.boxes = []
@@ -27,11 +25,11 @@ class Detect():
         COLORS = np.random.randint(0, 255, size=(len(LABELS), 3), dtype="uint8")
         return COLORS, LABELS
 
-    def load_yolo_net(self):
+    def load_yolo_net(self, picture):
         print("正在加载yolo网络")
         net = cv2.dnn.readNetFromDarknet(self.cfg, self.weight)
-        (self.H, self.W) = self.picture.shape[:2]
-        blob = cv2.dnn.blobFromImage(self.picture, 1 / 255.0, (416, 416), swapRB=True, crop=False)
+        (self.H, self.W) = picture.shape[:2]
+        blob = cv2.dnn.blobFromImage(picture, 1 / 255.0, (416, 416), swapRB=True, crop=False)
         net.setInput(blob)
         ln = net.getLayerNames()
         ln = [ln[i[0] - 1] for i in net.getUnconnectedOutLayers()]  # 仅确定我们需要YOLO的*输出*层名称
@@ -61,12 +59,12 @@ class Detect():
                     x = int(centerX - (width / 2))
                     y = int(centerY - (height / 2))
 
-
                     self.boxes.append([x, y, int(width), int(height)])
                     self.confidences.append(float(predict_confidence))
                     self.classIDs.append(classID)
 
-    def box_img(self, image):
+    def box_img(self, img):
+        image = img.copy()
         idxs = cv2.dnn.NMSBoxes(self.boxes, self.confidences, self.confidence, self.threshold)
         # 确保现在有至少一个框框
         if len(idxs) > 0:
@@ -88,16 +86,15 @@ class Detect():
         else:
             print("当前置信度下没有检测到任何目标")
 
-        cv2.imshow("Image", image)
-        cv2.waitKey(0)
+        return image
 
-    def run_one(self):
-        self.openCV_detect(self.load_yolo_net())
-        self.box_img(self.picture)
-
+    def run_one(self, picture):
+        self.openCV_detect(self.load_yolo_net(picture))
+        detect_picture = self.box_img(picture)
+        return detect_picture
 
 
 if __name__ == "__main__":
-    img=cv2.imread("./yolo/office.jpg",1)
-    test_detect = Detect("./yolo/coco.names", "./yolo/yolov3-tiny.cfg", "./yolo/yolov3-tiny.weights", img)
-    test_detect.run_one()
+    img = cv2.imread("./yolo/office.jpg", 1)
+    test_detect = Detect("./yolo/coco.names", "./yolo/yolov3-tiny.cfg", "./yolo/yolov3-tiny.weights")
+    test_detect.run_one(img)
