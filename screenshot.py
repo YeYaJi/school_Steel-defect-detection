@@ -1,10 +1,13 @@
 import cv2
-import tools
 import numpy as np
 import tools
 import detect
 
+from multiprocessing import Process, Queue
+
+
 yolo_detect = detect.Detect("./yolo/coco.names", "./yolo/yolov3-tiny.cfg", "./yolo/yolov3-tiny.weights")
+
 
 
 class Video_Crop():
@@ -13,6 +16,7 @@ class Video_Crop():
 
     def video_read(self):
         i = 0
+
         cap = cv2.VideoCapture(0)
         if not cap.isOpened():
             print("相机故障")
@@ -26,12 +30,17 @@ class Video_Crop():
             cv2.namedWindow("video", cv2.WINDOW_NORMAL)
             cv2.imshow("video", frame)
             wait = cv2.waitKey(1)  # 设置图像显示时间为1毫秒
+            # wait = ord("c")
             if wait == ord("c"):
                 i += 1
+                # self.pd_detect(frame,i)
 
-                detect_img = yolo_detect.run_one(frame)
-                picture_sum = np.hstack([frame, detect_img])
-                tools.imshow("num  [{}]  picture".format(i), picture_sum)
+                pd = Process(target=self.pd_detect, args=(frame,i))
+                pd.start()
+                pd.terminate()
+                # pd.join()
+
+
 
 
 
@@ -40,6 +49,10 @@ class Video_Crop():
 
         cap.release()
         cv2.destroyAllWindows()
+    def pd_detect(self,img,id):
+        detect_img = yolo_detect.run_one(img)
+        picture_sum = np.hstack([img, detect_img])
+        tools.imshow("num  [{}]  picture".format(id), picture_sum)
 
 
 if __name__ == "__main__":
