@@ -104,8 +104,9 @@ import cv2
 from multiprocessing import Process, Queue
 
 
-
-
+img=cv2.imread("./yolo/office.jpg",1)
+dst=cv2.GaussianBlur(img,(189,189),100)
+cv2.imwrite("123.jpg",dst)
 
 
 

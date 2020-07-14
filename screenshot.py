@@ -6,16 +6,12 @@ import detect
 from multiprocessing import Process, Queue
 
 
-# yolo_detect = detect.Detect("./yolo/coco.names", "./yolo/yolov3-tiny.cfg", "./yolo/yolov3-tiny.weights")
-
-
 class Video_Crop():
     def __init__(self):
         self.pictures = np.zeros(0)
 
     def video_read(self, queue_picture, queue_idx):
         i = 0
-
         cap = cv2.VideoCapture(0)
         if not cap.isOpened():
             print("相机故障")
@@ -25,7 +21,6 @@ class Video_Crop():
             if not ret:
                 print("没有读到视频流")
                 break
-
             cv2.namedWindow("video", cv2.WINDOW_NORMAL)
             cv2.imshow("video", frame)
             wait = cv2.waitKey(1)  # 设置图像显示时间为1毫秒
@@ -33,14 +28,11 @@ class Video_Crop():
                 i += 1
                 test_img = frame
                 queue_picture.put(test_img)
-                print("截图传入")
+                print("第-{}-张截图传入".format(i))
                 queue_idx.put(i)
                 print("索引传入")
-
-
             elif wait == ord("q"):
                 break
-
         cap.release()
         cv2.destroyAllWindows()
 
