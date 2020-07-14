@@ -3,6 +3,7 @@ import argparse
 import time
 import cv2
 import os
+import tools
 
 
 class Detect():
@@ -16,6 +17,7 @@ class Detect():
         self.boxes = []
         self.confidences = []
         self.classIDs = []
+        self.text = []
 
     # load the COCO class labels our YOLO model was trained on
     def load_labels(self):
@@ -82,7 +84,7 @@ class Detect():
                 cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
                 text = "{}: {:.4f}".format(LABELS[self.classIDs[i]], self.confidences[i])
                 cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
-
+                self.text.append(text)
         else:
             print("当前置信度下没有检测到任何目标")
 
@@ -93,8 +95,22 @@ class Detect():
         detect_picture = self.box_img(picture)
         return detect_picture
 
+    def show_detect(self, queue_picture, queue_idx):
+
+        while True:
+            img = queue_picture.get()
+            idx = queue_idx.get()
+            print("获取图片和索引--{}".format(idx))
+            detect_img = self.run_one(img)
+            picture_sum = np.hstack([img, detect_img])
+            tools.imshow("num  [{}]  picture".format(idx), picture_sum)
+            for i in range(len(self.text)):
+                print("num  [{}]  picture result:{}".format(idx, self.text[i]))
+
+
 
 if __name__ == "__main__":
     img = cv2.imread("./yolo/office.jpg", 1)
     test_detect = Detect("./yolo/coco.names", "./yolo/yolov3-tiny.cfg", "./yolo/yolov3-tiny.weights")
     test_detect.run_one(img)
+    print(test_detect.text)

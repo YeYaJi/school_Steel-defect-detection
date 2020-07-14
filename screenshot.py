@@ -6,15 +6,14 @@ import detect
 from multiprocessing import Process, Queue
 
 
-yolo_detect = detect.Detect("./yolo/coco.names", "./yolo/yolov3-tiny.cfg", "./yolo/yolov3-tiny.weights")
-
+# yolo_detect = detect.Detect("./yolo/coco.names", "./yolo/yolov3-tiny.cfg", "./yolo/yolov3-tiny.weights")
 
 
 class Video_Crop():
     def __init__(self):
         self.pictures = np.zeros(0)
 
-    def video_read(self):
+    def video_read(self, queue_picture, queue_idx):
         i = 0
 
         cap = cv2.VideoCapture(0)
@@ -30,18 +29,13 @@ class Video_Crop():
             cv2.namedWindow("video", cv2.WINDOW_NORMAL)
             cv2.imshow("video", frame)
             wait = cv2.waitKey(1)  # 设置图像显示时间为1毫秒
-            # wait = ord("c")
             if wait == ord("c"):
                 i += 1
-                # self.pd_detect(frame,i)
-
-                pd = Process(target=self.pd_detect, args=(frame,i))
-                pd.start()
-                pd.terminate()
-                # pd.join()
-
-
-
+                test_img = frame
+                queue_picture.put(test_img)
+                print("截图传入")
+                queue_idx.put(i)
+                print("索引传入")
 
 
             elif wait == ord("q"):
@@ -49,15 +43,13 @@ class Video_Crop():
 
         cap.release()
         cv2.destroyAllWindows()
-    def pd_detect(self,img,id):
-        detect_img = yolo_detect.run_one(img)
-        picture_sum = np.hstack([img, detect_img])
-        tools.imshow("num  [{}]  picture".format(id), picture_sum)
 
 
 if __name__ == "__main__":
+    qnum1 = Queue()
+    qnum2 = Queue()
     video = Video_Crop()
-    video.video_read()
+    video.video_read(qnum1, qnum2)
 
     # picture_sum = np.hstack(video.pictures)
     # print(picture_sum)

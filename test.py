@@ -71,32 +71,51 @@ import random
 # q4.join()
 import cv2
 
-
-def video_read(i):
-
-
-    cap = cv2.VideoCapture(0)
-    if not cap.isOpened():
-        print("相机故障")
-        exit()
-    while 1:
-        ret, frame = cap.read()
-        if not ret:
-            print("没有读到视频流")
-            break
-
-        cv2.namedWindow("video"+str(i), cv2.WINDOW_NORMAL)
-        cv2.imshow("video"+str(i), frame)
-        wait = cv2.waitKey(1)  # 设置图像显示时间为1毫秒
-
-        if wait == ord("q"):
-            break
-
-q1=Process(target=video_read,args=(1,))
-q2=Process(target=video_read,args=(2,))
-
-q1.start()
-q2.start()
+# def video_read(i):
+#
+#
+#     cap = cv2.VideoCapture(0)
+#     if not cap.isOpened():
+#         print("相机故障")
+#         exit()
+#     while 1:
+#         ret, frame = cap.read()
+#         if not ret:
+#             print("没有读到视频流")
+#             break
+#
+#         cv2.namedWindow("video"+str(i), cv2.WINDOW_NORMAL)
+#         cv2.imshow("video"+str(i), frame)
+#         wait = cv2.waitKey(1)  # 设置图像显示时间为1毫秒
+#
+#         if wait == ord("q"):
+#             break
+#
+# q1=Process(target=video_read,args=(1,))
+# q2=Process(target=video_read,args=(2,))
+#
+# q1.start()
+# q2.start()
 
 # q.join()
 # q.join()
+
+
+from multiprocessing import Process, Queue
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
