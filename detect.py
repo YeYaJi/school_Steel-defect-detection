@@ -94,9 +94,9 @@ class Detect():
             print("获取图片和索引-{}-".format(idx))
             detect_img, text_list = self.run_one(img)
             picture_sum = np.hstack([img, detect_img])
-            tools.imshow("num  [{}]  picture".format(idx), picture_sum)
-            for i in range(len(text_list)):
-                print("num  [{}]  picture result:{}".format(idx, text_list[i]))
+            tools.imshow("num  [{}]  picture", picture_sum)
+            # for i in range(len(text_list)):
+            #     print("num  [{}]  picture result:{}".format(idx, text_list[i]))
 
 
 if __name__ == "__main__":

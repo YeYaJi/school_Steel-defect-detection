@@ -103,20 +103,25 @@ import cv2
 
 from multiprocessing import Process, Queue
 
+#
+# img=cv2.imread("./yolo/office.jpg",1)
+# dst=cv2.GaussianBlur(img,(189,189),100)
+# cv2.imwrite("123.jpg",dst)
+#
+# while True:
+#
+#     a = input("输入over结束传入截图")
+#     b = a
+#     print(b)
+#     if b == "200":
+#         break
+#
+# print("结束")
 
-img=cv2.imread("./yolo/office.jpg",1)
-dst=cv2.GaussianBlur(img,(189,189),100)
-cv2.imwrite("123.jpg",dst)
 
-
-
-
-
-
-
-
-
-
-
-
+# import time
+# a=time.localtime()
+# print(a)
+# time_tuple = time.localtime( time.time())
+# print(time_tuple)
 
